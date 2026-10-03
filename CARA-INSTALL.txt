@@ -1,0 +1,11 @@
+# KeuanganKu — Aplikasi HP
+
+KeuanganKu ini dibuat sebagai Progressive Web App (PWA). Setelah dipasang dari browser, tampilannya dapat digunakan seperti aplikasi mandiri dan dapat bekerja offline untuk fitur yang sudah ada.
+
+## Cara memasang
+1. Host folder ini di HTTPS (misalnya GitHub Pages atau layanan hosting statis).
+2. Buka alamat HTTPS tersebut dari Chrome di Android.
+3. Pilih menu browser > "Tambahkan ke layar utama" / "Install app".
+4. Buka ikon KeuanganKu dari layar HP.
+
+Catatan: membuka file HTML langsung dengan file:// tidak cukup untuk fitur PWA/service worker. Aplikasi perlu dibuka melalui HTTPS atau localhost.

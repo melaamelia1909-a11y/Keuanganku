@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#f76f8e">
+<title>KeuanganKu — V2</title>
+<style>
+:root{--pink:#f76f8e;--pink2:#ffb3c1;--soft:#fff0f3;--mint:#35bf91;--blue:#62a8ff;--yellow:#ffc85c;--ink:#34343d;--muted:#858592;--bg:#fff8fa;--card:#fff;--line:#f0dfe4;--shadow:0 10px 28px rgba(70,40,55,.08)}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(135deg,#fff8fa,#fff0f4);font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;color:var(--ink)}
+button,input,select,textarea{font:inherit}button{cursor:pointer}.app{width:min(440px,100vw);min-height:100vh;margin:auto;background:var(--bg);position:relative;overflow-x:hidden}.screen{display:none;min-height:100vh;padding:22px 17px 94px}.screen.active{display:block}.center{display:flex;align-items:center;justify-content:center;text-align:center}
+.logo{font-size:31px;font-weight:900;color:var(--pink)}.mascot{font-size:72px;margin:15px 0}.muted{color:var(--muted)}.small{font-size:12px;color:var(--muted)}
+.pin-dots{display:flex;justify-content:center;gap:9px;margin:20px}.dot{width:12px;height:12px;border-radius:50%;background:#ffd8e0}.dot.on{background:var(--pink)}
+.keypad{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;max-width:300px;margin:16px auto}.key{height:58px;border:0;border-radius:50%;background:#ffe7ec;color:#4a3d42;font-weight:800;font-size:18px}.key:active{transform:scale(.96)}
+.primary{border:0;background:var(--pink);color:#fff;border-radius:15px;padding:13px 18px;font-weight:800;width:100%}.ghost{border:0;background:transparent;color:var(--pink);font-weight:800}.danger{color:#d74c69}
+.top{display:flex;align-items:center;justify-content:space-between;margin-bottom:17px}.top h2{margin:3px 0;font-size:21px}.avatar{width:44px;height:44px;border-radius:50%;background:#ffe0e8;display:flex;align-items:center;justify-content:center;font-size:24px}
+.balance{background:linear-gradient(135deg,#17b987,#5bd8af);color:#fff;padding:19px;border-radius:24px;box-shadow:var(--shadow);margin-bottom:12px}.balance .amount{font-size:28px;font-weight:900;margin:4px 0}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:11px}.card{background:var(--card);border-radius:20px;padding:15px;box-shadow:var(--shadow)}.stat-title{font-size:12px;color:var(--muted)}.stat{font-weight:900;font-size:16px;margin-top:5px}
+.section{font-weight:900;margin:19px 0 9px}.row{display:flex;align-items:center;justify-content:space-between;gap:10px}.row+.row{margin-top:12px}.tx-left{display:flex;align-items:center;gap:10px;min-width:0}.tx-icon{width:38px;height:38px;border-radius:13px;background:#fff0f3;display:flex;align-items:center;justify-content:center}.tx-name{font-weight:750;font-size:14px}.tx-meta{font-size:11px;color:var(--muted)}
+.progress{height:9px;background:#eeeaf0;border-radius:99px;overflow:hidden}.bar{height:100%;background:var(--mint);border-radius:99px}.badge{padding:5px 9px;border-radius:99px;background:#eafff7;color:#138d68;font-size:10px;font-weight:800}
+.bottom{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:min(440px,100vw);height:67px;background:#fff;border-top:1px solid #f2e8eb;display:flex;justify-content:space-around;align-items:center;z-index:15}.nav{border:0;background:transparent;color:#92929b;font-size:10px;font-weight:750}.nav span{display:block;font-size:20px;margin-bottom:1px}.nav.active{color:var(--pink)}
+.plus{position:fixed;bottom:68px;left:50%;transform:translateX(-50%);width:56px;height:56px;border:0;border-radius:50%;background:var(--pink);color:#fff;font-size:28px;box-shadow:0 10px 24px rgba(247,111,142,.35);z-index:16}
+.form label{display:block;font-size:12px;font-weight:800;margin:13px 0 6px}.field{width:100%;padding:12px 13px;border:1px solid var(--line);border-radius:13px;background:#fff;outline:none}.field:focus{border-color:var(--pink)}
+.chips{display:flex;gap:8px;overflow:auto;padding-bottom:3px}.chip{white-space:nowrap;padding:8px 12px;border-radius:99px;background:#fff;border:1px solid var(--line);font-size:12px}.chip.sel{background:#ffe2e8;color:#d84e70;border-color:#ffc2ce;font-weight:800}
+.modal{position:fixed;inset:0;background:rgba(40,20,30,.38);display:none;align-items:flex-end;z-index:30}.modal.show{display:flex}.sheet{width:min(440px,100vw);margin:auto;background:#fff;border-radius:27px 27px 0 0;padding:20px;max-height:90vh;overflow:auto}.sheet h2{margin:0 0 14px}.option{padding:15px;border:1px solid #f3e3e7;border-radius:18px;margin:9px 0;display:flex;align-items:center;gap:12px;background:#fff}.option b{display:block}.option small{color:var(--muted)}
+.list-item{padding:12px 0;border-bottom:1px solid #f3eaed}.list-item:last-child{border-bottom:0}.icon-btn{border:0;background:#fff0f3;border-radius:11px;padding:8px}.empty{text-align:center;padding:30px 10px;color:var(--muted)}
+.toast{position:fixed;top:16px;left:50%;transform:translate(-50%,-130%);background:#34343d;color:#fff;padding:11px 15px;border-radius:13px;font-size:12px;z-index:100;transition:.25s;max-width:90%;text-align:center}.toast.show{transform:translate(-50%,0)}
+.chart{height:150px;display:flex;align-items:end;gap:8px;padding:12px 2px}.col{flex:1;height:100%;display:flex;align-items:end;gap:3px}.c1,.c2{width:50%;border-radius:5px 5px 2px 2px}.c1{background:#62a8ff}.c2{background:#f76f8e}
+@media(min-width:600px){body{padding:20px 0}.app{border-radius:30px;box-shadow:0 20px 70px rgba(50,20,30,.12)}}
+</style>
+
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#f76f8e">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="KeuanganKu">
+<link rel="apple-touch-icon" href="icon.svg">
+</head>
+<body>
+<div class="toast" id="toast"></div>
+<div class="app">
+
+<section id="setup" class="screen center">
+<div style="width:100%">
+<div class="logo">KeuanganKu 💗</div><div class="mascot">👩🏻🐷</div>
+<h2 id="setupTitle">Buat PIN 6 Digit</h2><p class="muted">PIN digunakan untuk melindungi aplikasi di perangkat ini.</p>
+<div class="pin-dots" id="setupDots"></div><div class="keypad" id="setupKeys"></div>
+<button class="ghost" onclick="clearPin('setup')">Hapus</button>
+</div>
+</section>
+
+<section id="lock" class="screen center">
+<div style="width:100%">
+<div class="logo">KeuanganKu 💗</div><div style="font-size:58px;margin:18px">🔐</div>
+<h2>Masukkan PIN</h2><p class="muted">Selamat datang kembali 🌷</p>
+<div class="pin-dots" id="lockDots"></div><div class="keypad" id="lockKeys"></div>
+<button class="ghost" onclick="showRecovery()">Butuh bantuan?</button>
+</div>
+</section>
+
+<section id="dashboard" class="screen">
+<div class="top"><div><div class="small" id="todayLabel"></div><div class="top"><h2>Hai, Selamat Datang! 🌷</h2></div></div><div class="avatar">👩🏻</div></div>
+<div class="balance"><div style="font-size:12px;opacity:.9">Total Saldo</div><div class="amount" id="dashBalance">Rp 0</div><div style="font-size:11px;opacity:.9">Pelan-pelan, yang penting konsisten 💕</div></div>
+<div class="grid2"><div class="card"><div class="stat-title">📥 Pemasukan</div><div class="stat" id="dashIncome">Rp 0</div></div><div class="card"><div class="stat-title">📤 Pengeluaran</div><div class="stat" id="dashExpense">Rp 0</div></div></div>
+<div class="card" style="margin-top:12px"><div class="row"><div><div class="stat-title">🎯 Sisa Anggaran</div><div class="stat" id="dashBudgetLeft">Rp 0</div></div><span class="badge" id="dashBudgetPct">0%</span></div><div class="progress" style="margin-top:11px"><div class="bar" id="dashBudgetBar" style="width:0%"></div></div></div>
+<div class="card" style="margin-top:12px" onclick="showScreen('savings')" style="cursor:pointer"><div class="row"><div><div class="stat-title">🐷 Target Tabungan</div><div class="stat" id="dashSavingsText">Belum ada target</div></div><span class="badge" id="dashSavingsPct">0%</span></div><div class="progress" style="margin-top:10px"><div class="bar" id="dashSavingsBar" style="width:0%"></div></div></div>
+<div class="section">Aksi Cepat</div><div class="grid2"><button class="card" onclick="openAdd('income')" style="text-align:left;border:0">📥 <b>Pemasukan</b><div class="small">Catat uang masuk</div></button><button class="card" onclick="openAdd('expense')" style="text-align:left;border:0">📤 <b>Pengeluaran</b><div class="small">Catat uang keluar</div></button></div>
+<div class="section">Transaksi Terbaru</div><div class="card" id="recent"></div>
+</section>
+
+<section id="transactions" class="screen">
+<div class="top"><div><div class="small">KeuanganKu</div><h2>Transaksi</h2></div><button class="ghost" onclick="openAdd()">＋ Tambah</button></div>
+<div class="chips" id="filterChips"><button class="chip sel" onclick="setFilter('all',this)">Semua</button><button class="chip" onclick="setFilter('income',this)">Pemasukan</button><button class="chip" onclick="setFilter('expense',this)">Pengeluaran</button><button class="chip" onclick="setFilter('transfer',this)">Transfer</button></div>
+<div class="card" style="margin-top:13px"><input class="field" id="searchTx" placeholder="🔎 Cari transaksi..." oninput="renderTransactions()"></div>
+<div class="section" id="txCount"></div><div class="card" id="txList"></div>
+</section>
+
+<section id="budget" class="screen">
+<div class="top"><div><div class="small" id="budgetMonth"></div><h2>🎯 Anggaran</h2></div><button class="ghost" onclick="openBudgetForm()">＋</button></div>
+<div class="card"><div class="row"><div><div class="stat-title">Total Anggaran</div><div class="stat" id="budgetTotal">Rp 0</div></div><div style="font-size:25px;font-weight:900" id="budgetUsePct">0%</div></div><div class="progress" style="margin-top:11px"><div class="bar" id="budgetUseBar" style="width:0%"></div></div></div>
+<div class="section">Rincian Anggaran</div><div class="card" id="budgetList"></div>
+</section>
+
+<section id="reports" class="screen">
+<div class="top"><div><div class="small">KeuanganKu</div><h2>📊 Laporan</h2></div><button class="ghost" onclick="exportCSV()">⬇️ CSV</button></div>
+<div class="chips"><button class="chip sel">Bulan Ini</button><button class="chip" onclick="alert('Laporan tahunan tersedia pada pengembangan berikutnya.')">Tahunan</button></div>
+<div class="card" style="margin-top:13px"><b>Pemasukan vs Pengeluaran</b><div class="chart" id="chart"></div><div class="small">▣ Pemasukan &nbsp; <span style="color:var(--pink)">▣ Pengeluaran</span></div></div>
+<div class="section">Ringkasan</div><div class="grid2"><div class="card"><div class="stat-title">Pemasukan</div><div class="stat" id="repIncome">Rp0</div></div><div class="card"><div class="stat-title">Pengeluaran</div><div class="stat" id="repExpense">Rp0</div></div></div>
+<div class="section">Pengeluaran per Kategori</div><div class="card" id="repCategories"></div>
+</section>
+
+<section id="accounts" class="screen">
+<div class="top"><div><div class="small">KeuanganKu</div><h2>🏦 Dompet & Rekening</h2></div><button class="ghost" onclick="openAccountForm()">＋</button></div>
+<div id="accountList"></div>
+</section>
+
+<section id="categories" class="screen">
+<div class="top"><div><div class="small">KeuanganKu</div><h2>🏷️ Kategori</h2></div><button class="ghost" onclick="openCategoryForm()">＋</button></div>
+<div class="section">Kategori Pengeluaran</div><div class="card" id="expenseCats"></div>
+<div class="section">Kategori Pemasukan</div><div class="card" id="incomeCats"></div>
+</section>
+
+
+<section id="savings" class="screen">
+<div class="top"><div><div class="small">KeuanganKu</div><h2>🐷 Target Tabungan</h2></div><button class="ghost" onclick="openSavingsForm()">＋</button></div>
+<div class="card" id="savingsHero"></div>
+<div class="section">Target Saya</div>
+<div id="savingsList"></div>
+</section>
+
+<section id="settings" class="screen">
+<div class="top"><div><div class="small">KeuanganKu V2</div><h2>⚙️ Pengaturan</h2></div><div class="avatar">👩🏻</div></div>
+<div class="card"><b>🔐 Keamanan</b><div class="row list-item" onclick="changePin()" style="cursor:pointer"><span>Ubah PIN</span><span>›</span></div><div class="row list-item" onclick="showRecovery()" style="cursor:pointer"><span>Reset PIN dengan backup</span><span>›</span></div></div>
+<div class="card" style="margin-top:12px"><b>💾 Data</b><div class="row list-item" onclick="exportBackup()" style="cursor:pointer"><span>Backup Data (.json)</span><span>›</span></div><div class="row list-item" onclick="importBackup()" style="cursor:pointer"><span>Restore Data</span><span>›</span></div><div class="row list-item" onclick="exportCSV()" style="cursor:pointer"><span>Export Excel/CSV</span><span>›</span></div></div>
+<div class="card" style="margin-top:12px"><b>🎯 Keuangan</b><div class="row list-item" onclick="showScreen('savings')" style="cursor:pointer"><span>Target Tabungan</span><span>›</span></div></div>
+<div class="card" style="margin-top:12px"><b>🏦 Data Dasar</b><div class="row list-item" onclick="showScreen('accounts')" style="cursor:pointer"><span>Dompet & Rekening</span><span>›</span></div><div class="row list-item" onclick="showScreen('categories')" style="cursor:pointer"><span>Kategori Custom</span><span>›</span></div></div>
+<div class="card" style="margin-top:12px"><b>ℹ️ Tentang</b><p class="small">KeuanganKu V2 — pencatatan keuangan pribadi offline-first dengan anggaran & target tabungan. Data tersimpan di perangkat ini.</p></div>
+</section>
+
+<section id="form" class="screen">
+<div class="top"><button class="ghost" onclick="showScreen('dashboard')">‹ Kembali</button><h2 id="formTitle">Tambah Transaksi</h2><span></span></div>
+<div class="card form">
+<label>Tanggal</label><input class="field" id="fDate" type="date">
+<label>Jenis</label><select class="field" id="fType" onchange="renderFormCategories()"><option value="income">📥 Pemasukan</option><option value="expense">📤 Pengeluaran</option></select>
+<label>Kategori</label><select class="field" id="fCategory"></select>
+<label>Nominal</label><input class="field" id="fAmount" type="number" min="1" placeholder="Contoh: 50000">
+<label id="accountLabel">Akun</label><select class="field" id="fAccount"></select>
+<label>Keterangan</label><input class="field" id="fDesc" placeholder="Contoh: Makan siang">
+<label>Catatan (opsional)</label><textarea class="field" id="fNotes" rows="3"></textarea>
+<button class="primary" style="margin-top:17px" onclick="saveTransaction()">Simpan Transaksi</button>
+</div>
+</section>
+
+<nav class="bottom" id="bottomNav">
+<button class="nav active" onclick="navTo('dashboard',this)"><span>⌂</span>Beranda</button>
+<button class="nav" onclick="navTo('transactions',this)"><span>☷</span>Transaksi</button>
+<button class="nav" onclick="navTo('budget',this)"><span>🎯</span>Anggaran</button>
+<button class="nav" onclick="navTo('savings',this)"><span>🐷</span>Tabungan</button>
+<button class="nav" onclick="navTo('reports',this)"><span>▥</span>Laporan</button>
+<button class="nav" onclick="navTo('settings',this)"><span>⚙</span>Menu</button>
+</nav>
+<button class="plus" id="plusBtn" onclick="openAdd()">＋</button>
+
+<div class="modal" id="addModal"><div class="sheet"><div class="row"><h2>Tambah Transaksi</h2><button class="ghost" onclick="closeAdd()">✕</button></div>
+<div class="option" onclick="closeAdd();openAdd('income')"><div style="font-size:28px">⬆️</div><div><b>Pemasukan</b><small>Catat uang yang masuk</small></div></div>
+<div class="option" onclick="closeAdd();openAdd('expense')"><div style="font-size:28px">⬇️</div><div><b>Pengeluaran</b><small>Catat uang yang keluar</small></div></div>
+<div class="option" onclick="closeAdd();openTransfer()"><div style="font-size:28px">🔄</div><div><b>Transfer</b><small>Pindah antar rekening</small></div></div></div></div>
+
+<div class="modal" id="simpleModal"><div class="sheet" id="simpleSheet"></div></div>
+<input type="file" id="fileInput" accept=".json" style="display:none">
+
+<script>
+const KEY='keuanganku_v1';
+let state=JSON.parse(localStorage.getItem(KEY)||'null');
+let currentFilter='all', setupPin='', lockPin='', setupStage=1;
+
+const defaultState=()=>({
+  pinHash:null,
+  accounts:[
+    {id:uid(),name:'Cash',type:'cash',initial:0},
+    {id:uid(),name:'Bank',type:'bank',initial:0}
+  ],
+  categories:[
+    {id:uid(),name:'Makanan',type:'expense',icon:'🍜',active:true},
+    {id:uid(),name:'Transportasi',type:'expense',icon:'🚌',active:true},
+    {id:uid(),name:'Rumah',type:'expense',icon:'🏠',active:true},
+    {id:uid(),name:'Pendidikan',type:'expense',icon:'📚',active:true},
+    {id:uid(),name:'Kesehatan',type:'expense',icon:'💗',active:true},
+    {id:uid(),name:'Hiburan',type:'expense',icon:'🎀',active:true},
+    {id:uid(),name:'Lainnya',type:'expense',icon:'✨',active:true},
+    {id:uid(),name:'Gaji',type:'income',icon:'💰',active:true},
+    {id:uid(),name:'Honor',type:'income',icon:'📚',active:true},
+    {id:uid(),name:'Bonus',type:'income',icon:'🎁',active:true},
+    {id:uid(),name:'Lainnya',type:'income',icon:'✨',active:true}
+  ],
+  transactions:[],
+  budgets:[],
+  savingsTargets:[]
+});
+if(!state){state=defaultState();save();}
+if(!state.savingsTargets){state.savingsTargets=[];save();}
+
+function uid(){return Math.random().toString(36).slice(2)+Date.now().toString(36)}
+function save(){localStorage.setItem(KEY,JSON.stringify(state))}
+function rupiah(n){return new Intl.NumberFormat('id-ID',{style:'currency',currency:'IDR',maximumFractionDigits:0}).format(Number(n)||0)}
+function esc(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200)}
+function today(){return new Date().toISOString().slice(0,10)}
+function monthKey(d=today()){return d.slice(0,7)}
+function monthName(){return new Date().toLocaleDateString('id-ID',{month:'long',year:'numeric'})}
+function monthTx(){return state.transactions.filter(t=>t.date.startsWith(monthKey()))}
+function totals(){let ts=monthTx();return {income:ts.filter(t=>t.type==='income').reduce((a,t)=>a+t.amount,0),expense:ts.filter(t=>t.type==='expense').reduce((a,t)=>a+t.amount,0)}}
+function allBalance(){return state.accounts.reduce((sum,a)=>sum+a.initial,0)+state.transactions.reduce((s,t)=>s+(t.type==='income'?t.amount:t.type==='expense'?-t.amount:0),0)}
+function categoryById(id){return state.categories.find(c=>c.id===id)}
+function accountById(id){return state.accounts.find(a=>a.id===id)}
+
+async function hashPin(pin){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(pin));return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}
+async function setPin(pin){state.pinHash=await hashPin(pin);save()}
+async function verifyPin(pin){return state.pinHash===await hashPin(pin)}
+
+function buildKeys(id,kind){const el=document.getElementById(id);const arr=[1,2,3,4,5,6,7,8,9,0,'⌫'];el.innerHTML=arr.map(k=>`<button class="key" onclick="pinKey('${kind}','${k}')">${k}</button>`).join('')}
+function dots(id,len){document.getElementById(id).innerHTML=[0,1,2,3,4,5].map(i=>`<i class="dot ${i<len?'on':''}"></i>`).join('')}
+function pinKey(kind,k){
+ let p=kind==='setup'?setupPin:lockPin;
+ if(k==='⌫')p=p.slice(0,-1);else if(p.length<6)p+=k;
+ if(kind==='setup')setupPin=p;else lockPin=p;dots(kind==='setup'?'setupDots':'lockDots',p.length);
+ if(p.length===6)setTimeout(()=>kind==='setup'?finishSetup():finishLock(),180);
+}
+async function finishSetup(){
+ if(setupStage===1){window._firstPin=setupPin;setupPin='';setupStage=2;document.getElementById('setupTitle').textContent='Ulangi PIN 6 Digit';dots('setupDots',0);return}
+ if(setupPin!==window._firstPin){toast('PIN belum sama, coba lagi.');setupPin='';dots('setupDots',0);return}
+ await setPin(setupPin);setupPin='';window._firstPin=null;showScreen('dashboard');toast('PIN berhasil dibuat 💗');updateAll();
+}
+async function finishLock(){if(await verifyPin(lockPin)){lockPin='';showScreen('dashboard');updateAll()}else{toast('PIN salah. Coba lagi.');lockPin='';dots('lockDots',0)}}
+function clearPin(kind){if(kind==='setup'){setupPin='';dots('setupDots',0)}else{lockPin='';dots('lockDots',0)}}
+
+function showScreen(id){
+ document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');
+ const navIds=['dashboard','transactions','budget','savings','reports','settings'];document.querySelectorAll('.nav').forEach(n=>n.classList.remove('active'));
+ const i=navIds.indexOf(id);if(i>=0)document.querySelectorAll('.nav')[i].classList.add('active');
+ document.getElementById('bottomNav').style.display=['setup','lock','form'].includes(id)?'none':'flex';
+ document.getElementById('plusBtn').style.display=['setup','lock','form'].includes(id)?'none':'block';
+ window.scrollTo(0,0);updateAll();
+}
+function navTo(id,btn){showScreen(id)}
+function openAdd(type){
+ document.getElementById('fDate').value=today();document.getElementById('fType').value=type||'expense';document.getElementById('fAmount').value='';document.getElementById('fDesc').value='';document.getElementById('fNotes').value='';
+renderFormCategories();renderAccounts();showScreen('form');document.getElementById('formTitle').textContent=type==='income'?'Tambah Pemasukan':type==='expense'?'Tambah Pengeluaran':'Tambah Transaksi';
+}
+function openAddMenu(){document.getElementById('addModal').classList.add('show')}
+function closeAdd(){document.getElementById('addModal').classList.remove('show')}
+document.getElementById('plusBtn').onclick=openAddMenu;
+
+function renderFormCategories(){
+ const type=document.getElementById('fType').value;const list=state.categories.filter(c=>c.type===type&&c.active);
+ document.getElementById('fCategory').innerHTML=list.map(c=>`<option value="${c.id}">${c.icon} ${esc(c.name)}</option>`).join('');
+}
+function renderAccounts(){document.getElementById('fAccount').innerHTML=state.accounts.map(a=>`<option value="${a.id}">${a.type==='cash'?'💵':a.type==='bank'?'🏦':'📱'} ${esc(a.name)} — ${rupiah(accountBalance(a.id))}</option>`).join('')}
+function accountBalance(id){const a=accountById(id);let n=a?a.initial:0;state.transactions.forEach(t=>{if(t.accountId===id)n+=t.type==='income'?t.amount:t.type==='expense'?-t.amount:0;if(t.type==='transfer'&&t.from===id)n-=t.amount;if(t.type==='transfer'&&t.to===id)n+=t.amount});return n}
+function saveTransaction(){
+ const type=document.getElementById('fType').value, amount=Number(document.getElementById('fAmount').value);
+ if(!amount||amount<=0)return toast('Masukkan nominal yang benar.');
+ if(!document.getElementById('fDate').value)return toast('Tanggal wajib diisi.');
+ state.transactions.unshift({id:uid(),type,date:document.getElementById('fDate').value,categoryId:document.getElementById('fCategory').value,accountId:document.getElementById('fAccount').value,amount,desc:document.getElementById('fDesc').value.trim()||'Tanpa keterangan',notes:document.getElementById('fNotes').value.trim()});
+ save();showScreen('dashboard');toast('Transaksi berhasil disimpan 🌷');
+}
+function openTransfer(){
+ const options=state.accounts.map(a=>`<option value="${a.id}">${esc(a.name)} — ${rupiah(accountBalance(a.id))}</option>`).join('');
+ document.getElementById('simpleSheet').innerHTML=`<div class="row"><h2>🔄 Transfer</h2><button class="ghost" onclick="closeSimple()">✕</button></div><div class="form"><label>Dari rekening</label><select class="field" id="trFrom">${options}</select><label>Ke rekening</label><select class="field" id="trTo">${options}</select><label>Nominal</label><input class="field" id="trAmount" type="number" min="1"><label>Keterangan</label><input class="field" id="trDesc" placeholder="Pindah uang"><button class="primary" style="margin-top:17px" onclick="saveTransfer()">Simpan Transfer</button></div>`;
+ document.getElementById('simpleModal').classList.add('show');
+}
+function closeSimple(){document.getElementById('simpleModal').classList.remove('show')}
+function saveTransfer(){const from=document.getElementById('trFrom').value,to=document.getElementById('trTo').value,amount=Number(document.getElementById('trAmount').value);if(from===to)return toast('Pilih rekening yang berbeda.');if(!amount||amount<=0)return toast('Masukkan nominal.');if(accountBalance(from)<amount)return toast('Saldo rekening asal tidak cukup.');state.transactions.unshift({id:uid(),type:'transfer',date:today(),from,to,amount,desc:document.getElementById('trDesc').value.trim()||'Transfer antar rekening'});save();closeSimple();showScreen('dashboard');toast('Transfer berhasil 🔄')}
+
+function renderDashboard(){
+ const t=totals();document.getElementById('dashBalance').textContent=rupiah(allBalance());document.getElementById('dashIncome').textContent=rupiah(t.income);document.getElementById('dashExpense').textContent=rupiah(t.expense);
+ const totalBudget=state.budgets.reduce((s,b)=>s+b.amount,0),used=monthTx().filter(t=>t.type==='expense').reduce((s,t)=>s+t.amount,0),pct=totalBudget?Math.min(100,Math.round(used/totalBudget*100)):0;
+ document.getElementById('dashBudgetLeft').textContent=rupiah(Math.max(0,totalBudget-used));document.getElementById('dashBudgetPct').textContent=pct+'%';document.getElementById('dashBudgetBar').style.width=pct+'%';
+ const activeSavings=state.savingsTargets.filter(x=>!x.archived), st=activeSavings.reduce((s,x)=>s+x.target,0), ss=activeSavings.reduce((s,x)=>s+x.saved,0), sp=st?Math.min(100,Math.round(ss/st*100)):0;
+ document.getElementById('dashSavingsText').textContent=activeSavings.length?`${rupiah(ss)} / ${rupiah(st)}`:'Belum ada target';
+ document.getElementById('dashSavingsPct').textContent=sp+'%';document.getElementById('dashSavingsBar').style.width=sp+'%';
+
+ const recent=state.transactions.slice(0,5);document.getElementById('recent').innerHTML=recent.length?recent.map(txHtml).join(''):`<div class="empty">Belum ada transaksi.<br>Yuk mulai catat keuanganmu 💕</div>`;
+ document.getElementById('todayLabel').textContent=new Date().toLocaleDateString('id-ID',{day:'2-digit',month:'long',year:'numeric'});
+}
+function txHtml(t){
+ const c=categoryById(t.categoryId), icon=t.type==='income'?'💰':t.type==='expense'?(c?.icon||'💸'):'🔄', name=t.type==='transfer'?(accountById(t.from)?.name+' → '+accountById(t.to)?.name):(t.desc||c?.name||'Transaksi'), color=t.type==='income'?'#159a70':t.type==='expense'?'#df5a76':'#6d7180', sign=t.type==='income'?'+':t.type==='expense'?'-':'';
+ return `<div class="row list-item"><div class="tx-left"><div class="tx-icon">${icon}</div><div><div class="tx-name">${esc(name)}</div><div class="tx-meta">${esc(t.date)} • ${esc(c?.name||'Transfer')}</div></div></div><b style="color:${color};white-space:nowrap">${sign} ${rupiah(t.amount)}</b></div>`;
+}
+function renderTransactions(){
+ const q=(document.getElementById('searchTx')?.value||'').toLowerCase();let ts=state.transactions.filter(t=>currentFilter==='all'||t.type===currentFilter);
+ ts=ts.filter(t=>{const c=categoryById(t.categoryId);return !q||[t.desc,c?.name,t.date].join(' ').toLowerCase().includes(q)});
+ document.getElementById('txCount').textContent=`${ts.length} transaksi`;document.getElementById('txList').innerHTML=ts.length?ts.map(txHtml).join(''):`<div class="empty">Tidak ada transaksi yang cocok 🌷</div>`;
+}
+function setFilter(f,btn){currentFilter=f;document.querySelectorAll('#filterChips .chip').forEach(x=>x.classList.remove('sel'));btn.classList.add('sel');renderTransactions()}
+
+function renderBudget(){
+ document.getElementById('budgetMonth').textContent=monthName();const total=state.budgets.reduce((s,b)=>s+b.amount,0),usedByCat={};
+ monthTx().filter(t=>t.type==='expense').forEach(t=>usedByCat[t.categoryId]=(usedByCat[t.categoryId]||0)+t.amount);
+ const used=Object.values(usedByCat).reduce((a,b)=>a+b,0),pct=total?Math.min(100,Math.round(used/total*100)):0;
+ document.getElementById('budgetTotal').textContent=rupiah(total);document.getElementById('budgetUsePct').textContent=pct+'%';document.getElementById('budgetUseBar').style.width=pct+'%';
+ document.getElementById('budgetList').innerHTML=state.budgets.length?state.budgets.map(b=>{const c=categoryById(b.categoryId),u=usedByCat[b.categoryId]||0,p=Math.min(100,Math.round(u/b.amount*100));return `<div class="list-item"><div class="row"><span>${c?.icon||'🎯'} <b>${esc(c?.name||'Kategori')}</b></span><span>${p}%</span></div><div class="small" style="margin:4px 0 7px">${rupiah(u)} / ${rupiah(b.amount)}</div><div class="progress"><div class="bar" style="width:${p}%"></div></div></div>`}).join(''):`<div class="empty">Belum ada anggaran.<br>Tekan ＋ untuk membuat anggaran 🌷</div>`;
+}
+function openBudgetForm(){
+ const cats=state.categories.filter(c=>c.type==='expense'&&c.active).map(c=>`<option value="${c.id}">${c.icon} ${esc(c.name)}</option>`).join('');
+ document.getElementById('simpleSheet').innerHTML=`<div class="row"><h2>🎯 Tambah Anggaran</h2><button class="ghost" onclick="closeSimple()">✕</button></div><div class="form"><label>Kategori</label><select class="field" id="bCat">${cats}</select><label>Nominal Anggaran</label><input class="field" id="bAmount" type="number" min="1" placeholder="Contoh: 1000000"><label>Persentase (opsional)</label><input class="field" id="bPct" type="number" min="0" max="100" placeholder="Contoh: 20"><div class="small" style="margin-top:7px">Jika persentase diisi, nominal akan dihitung dari total pemasukan bulan ini.</div><button class="primary" style="margin-top:17px" onclick="saveBudget()">Simpan Anggaran</button></div>`;
+ document.getElementById('simpleModal').classList.add('show');
+}
+function saveBudget(){const cat=document.getElementById('bCat').value,pct=Number(document.getElementById('bPct').value),manual=Number(document.getElementById('bAmount').value),income=totals().income;let amount=manual;if(pct>0)amount=Math.round(income*pct/100);if(!amount||amount<=0)return toast('Masukkan nominal atau persentase.');state.budgets=state.budgets.filter(b=>b.categoryId!==cat);state.budgets.push({id:uid(),categoryId:cat,amount,pct:pct||null,month:monthKey()});save();closeSimple();updateAll();toast('Anggaran tersimpan 🎯')}
+
+function renderReports(){
+ const t=totals();document.getElementById('repIncome').textContent=rupiah(t.income);document.getElementById('repExpense').textContent=rupiah(t.expense);
+ const days=[1,7,14,21,28],max=Math.max(t.income,t.expense,1);document.getElementById('chart').innerHTML=days.map((d,i)=>{const a=t.income*(.45+.13*i),b=t.expense*(.45+.09*i);return `<div class="col"><div class="c1" style="height:${Math.min(100,a/max*70)}%"></div><div class="c2" style="height:${Math.min(100,b/max*70)}%"></div></div>`}).join('');
+ const map={};monthTx().filter(x=>x.type==='expense').forEach(x=>map[x.categoryId]=(map[x.categoryId]||0)+x.amount);const rows=Object.entries(map).sort((a,b)=>b[1]-a[1]);document.getElementById('repCategories').innerHTML=rows.length?rows.map(([id,v])=>{const c=categoryById(id),p=t.expense?Math.round(v/t.expense*100):0;return `<div class="row list-item"><span>${c?.icon||'💸'} ${esc(c?.name||'Lainnya')}</span><b>${p}% · ${rupiah(v)}</b></div>`}).join(''):`<div class="empty">Belum ada pengeluaran bulan ini.</div>`;
+}
+function renderAccounts(){document.getElementById('accountList').innerHTML=state.accounts.map(a=>`<div class="card" style="margin-bottom:12px"><div class="row"><div><div class="stat-title">${a.type==='cash'?'💵 Cash':a.type==='bank'?'🏦 Bank':'📱 E-Wallet'}</div><b>${esc(a.name)}</b></div><button class="icon-btn" onclick="deleteAccount('${a.id}')">🗑️</button></div><div style="font-size:22px;font-weight:900;margin-top:10px">${rupiah(accountBalance(a.id))}</div></div>`).join('')}
+function openAccountForm(){document.getElementById('simpleSheet').innerHTML=`<div class="row"><h2>🏦 Tambah Rekening</h2><button class="ghost" onclick="closeSimple()">✕</button></div><div class="form"><label>Nama</label><input class="field" id="aName" placeholder="Contoh: Bank BCA"><label>Jenis</label><select class="field" id="aType"><option value="cash">Cash</option><option value="bank">Bank</option><option value="e_wallet">E-Wallet</option></select><label>Saldo Awal</label><input class="field" id="aInitial" type="number" value="0"><button class="primary" style="margin-top:17px" onclick="saveAccount()">Simpan</button></div>`;document.getElementById('simpleModal').classList.add('show')}
+function saveAccount(){const name=document.getElementById('aName').value.trim(),initial=Number(document.getElementById('aInitial').value)||0;if(!name)return toast('Nama rekening wajib diisi.');state.accounts.push({id:uid(),name,type:document.getElementById('aType').value,initial});save();closeSimple();updateAll();toast('Rekening ditambahkan 🏦')}
+function deleteAccount(id){if(state.accounts.length<=1)return toast('Minimal harus ada satu rekening.');if(state.transactions.some(t=>t.accountId===id||t.from===id||t.to===id))return toast('Rekening sudah dipakai transaksi dan tidak bisa dihapus.');if(confirm('Hapus rekening ini?')){state.accounts=state.accounts.filter(a=>a.id!==id);save();updateAll()}}
+
+function renderCategories(){
+ const render=(type)=>state.categories.filter(c=>c.type===type).map(c=>`<div class="row list-item"><span>${c.icon} ${esc(c.name)}</span><span>${c.active?'Aktif':'Nonaktif'} <button class="icon-btn" onclick="toggleCat('${c.id}')">✏️</button></span></div>`).join('')||`<div class="empty">Belum ada kategori.</div>`;
+ document.getElementById('expenseCats').innerHTML=render('expense');document.getElementById('incomeCats').innerHTML=render('income');
+}
+function openCategoryForm(){document.getElementById('simpleSheet').innerHTML=`<div class="row"><h2>🏷️ Kategori Baru</h2><button class="ghost" onclick="closeSimple()">✕</button></div><div class="form"><label>Nama kategori</label><input class="field" id="cName" placeholder="Contoh: Perawatan Diri"><label>Jenis</label><select class="field" id="cType"><option value="expense">Pengeluaran</option><option value="income">Pemasukan</option></select><label>Emoji</label><input class="field" id="cIcon" value="💗"><button class="primary" style="margin-top:17px" onclick="saveCategory()">Simpan</button></div>`;document.getElementById('simpleModal').classList.add('show')}
+function saveCategory(){const name=document.getElementById('cName').value.trim();if(!name)return toast('Nama kategori wajib diisi.');state.categories.push({id:uid(),name,type:document.getElementById('cType').value,icon:document.getElementById('cIcon').value||'✨',active:true});save();closeSimple();updateAll();toast('Kategori ditambahkan 🏷️')}
+function toggleCat(id){const c=categoryById(id);c.active=!c.active;save();renderCategories();}
+
+
+function renderSavings(){
+ const active=state.savingsTargets.filter(x=>!x.archived);
+ const totalTarget=active.reduce((s,x)=>s+x.target,0), totalSaved=active.reduce((s,x)=>s+x.saved,0);
+ const pct=totalTarget?Math.min(100,Math.round(totalSaved/totalTarget*100)):0;
+ document.getElementById('savingsHero').innerHTML=active.length
+ ? `<div class="row"><div><div class="stat-title">Total target</div><div class="stat">${rupiah(totalTarget)}</div></div><div style="text-align:right"><div class="stat-title">Terkumpul</div><div class="stat">${rupiah(totalSaved)}</div></div></div><div class="progress" style="margin-top:12px"><div class="bar" style="width:${pct}%"></div></div><div class="row" style="margin-top:8px"><span class="small">${pct}% tercapai</span><span class="small">${rupiah(Math.max(0,totalTarget-totalSaved))} lagi</span></div>`
+ : `<div class="empty">Belum ada target tabungan.<br>Yuk buat target pertamamu 🐷💗</div>`;
+ document.getElementById('savingsList').innerHTML=active.length?active.map(x=>{
+   const p=x.target?Math.min(100,Math.round(x.saved/x.target*100)):0;
+   return `<div class="card" style="margin-bottom:12px"><div class="row"><div><div class="stat-title">${esc(x.deadline||'Tanpa batas waktu')}</div><b>${esc(x.name)}</b></div><button class="icon-btn" onclick="deleteSavings('${x.id}')">🗑️</button></div><div style="font-size:21px;font-weight:900;margin-top:10px">${rupiah(x.saved)} <span class="small">/ ${rupiah(x.target)}</span></div><div class="progress" style="margin-top:9px"><div class="bar" style="width:${p}%"></div></div><div class="row" style="margin-top:8px"><span class="badge">${p}%</span><button class="ghost" onclick="addSavings('${x.id}')">＋ Tambah Tabungan</button></div></div>`;
+ }).join(''):'';
+}
+function openSavingsForm(){
+ document.getElementById('simpleSheet').innerHTML=`<div class="row"><h2>🐷 Target Baru</h2><button class="ghost" onclick="closeSimple()">✕</button></div><div class="form">
+ <label>Nama target</label><input class="field" id="sName" placeholder="Contoh: Laptop Baru">
+ <label>Nominal target</label><input class="field" id="sTarget" type="number" min="1" placeholder="Contoh: 10000000">
+ <label>Tabungan awal</label><input class="field" id="sSaved" type="number" min="0" value="0">
+ <label>Target waktu (opsional)</label><input class="field" id="sDeadline" type="date">
+ <button class="primary" style="margin-top:17px" onclick="saveSavings()">Simpan Target</button></div>`;
+ document.getElementById('simpleModal').classList.add('show');
+}
+function saveSavings(){
+ const name=document.getElementById('sName').value.trim(),target=Number(document.getElementById('sTarget').value)||0,saved=Number(document.getElementById('sSaved').value)||0;
+ if(!name||target<=0)return toast('Nama dan nominal target wajib diisi.');
+ state.savingsTargets.push({id:uid(),name,target,saved:Math.min(saved,target),deadline:document.getElementById('sDeadline').value||'',archived:false});
+ save();closeSimple();updateAll();showScreen('savings');toast('Target tabungan dibuat 🐷');
+}
+function addSavings(id){
+ const x=state.savingsTargets.find(v=>v.id===id);if(!x)return;
+ const raw=prompt(`Tambah tabungan untuk "${x.name}"\nSisa target: ${rupiah(Math.max(0,x.target-x.saved))}`);
+ const amount=Number(raw);if(!amount||amount<=0)return;
+ x.saved=Math.min(x.target,x.saved+amount);save();updateAll();toast(x.saved>=x.target?'Target tercapai! 🎉':'Tabungan berhasil ditambahkan 💗');
+}
+function deleteSavings(id){
+ if(confirm('Hapus target tabungan ini?')){state.savingsTargets=state.savingsTargets.filter(x=>x.id!==id);save();updateAll();toast('Target dihapus.')}
+}
+
+function exportBackup(){const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'});download(blob,'KeuanganKu-backup.json')}
+function importBackup(){document.getElementById('fileInput').click()}
+document.getElementById('fileInput').addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const x=JSON.parse(r.result);if(!x.accounts||!x.categories||!x.transactions)throw Error();state=x;save();toast('Backup berhasil dipulihkan.');updateAll()}catch{toast('File backup tidak valid.')}};r.readAsText(f);e.target.value='' })
+function exportCSV(){const rows=[['Tanggal','Jenis','Kategori','Akun','Nominal','Keterangan']];state.transactions.forEach(t=>{const c=categoryById(t.categoryId),a=accountById(t.accountId);rows.push([t.date,t.type,c?.name||'Transfer',a?.name||'',t.amount,t.desc])});const csv=rows.map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');download(new Blob([csv],{type:'text/csv;charset=utf-8'}),'KeuanganKu-transaksi.csv')}
+function download(blob,name){const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);toast('File berhasil dibuat 💾')}
+
+async function changePin(){const old=prompt('Masukkan PIN lama (6 digit):');if(!old||!(await verifyPin(old)))return toast('PIN lama salah.');const np=prompt('Masukkan PIN baru (6 digit):');if(!/^\d{6}$/.test(np))return toast('PIN harus 6 digit.');await setPin(np);toast('PIN berhasil diubah 🔐')}
+function showRecovery(){alert('Karena aplikasi ini tidak memakai email, recovery dilakukan melalui file backup. Untuk versi V1, simpan backup JSON di tempat aman. Fitur reset PIN berbasis backup akan disempurnakan pada versi berikutnya.')}
+function updateAll(){renderDashboard();renderTransactions();renderBudget();renderSavings();renderReports();renderAccounts();renderCategories();renderFormCategories();renderAccounts()}
+function init(){
+ buildKeys('setupKeys','setup');buildKeys('lockKeys','lock');dots('setupDots',0);dots('lockDots',0);
+ if(state.pinHash)showScreen('lock');else showScreen('setup');
+}
+init();
+</script>
+</div>
+
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').catch(() => {});
+  });
+}
+</script>
+</body>
+</html>
